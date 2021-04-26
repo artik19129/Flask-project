@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, url_for
+
 # import json
 
 app = Flask(__name__, template_folder="client-side")
@@ -8,18 +9,18 @@ app = Flask(__name__, template_folder="client-side")
 #     users = json.load(json_users)
 
 students = [
-    {},
-    {"name": "Sanka", "age": "16", "sex": 1, "developer": 1, "language": "Python"},
-    {"name": "Artem", "age": "16", "sex": 1, "developer": 1, "language": "JavaScript"},
-    {"name": "Vasya", "age": "19", "sex": 1, "developer": 1, "language": "Java"},
-    {"name": "Ilya", "age": "14", "sex": 1, "developer": 0, "language": "None"},
-    {"name": "Masha", "age": "15", "sex": 0, "developer": 1, "language": "Ruby"},
+    {"id": 0, "name": "Sanka", "age": "16", "sex": 1, "developer": 1, "language": "Python"},
+    {"id": 1, "name": "Artem", "age": "16", "sex": 1, "developer": 1, "language": "JavaScript"},
+    {"id": 2, "name": "Vasya", "age": "19", "sex": 1, "developer": 1, "language": "Java"},
+    {"id": 3, "name": "Ilya", "age": "14", "sex": 1, "developer": 0, "language": "None"},
+    {"id": 4, "name": "Masha", "age": "15", "sex": 0, "developer": 1, "language": "Ruby"},
 ]
 
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    title = 'Главная'
+    return render_template('index.html', title=title)
 
 
 @app.route('/users')
@@ -30,7 +31,6 @@ def users():
 
 @app.route('/user/<int:id>')
 def user(id):
-    global users
     return render_template('user.html', user=students[id])
 
 

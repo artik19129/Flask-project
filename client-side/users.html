@@ -1,12 +1,26 @@
 {% extends 'base.html' %}
 
+{% block active2 %}
+    active
+{% endblock %}
+
 {% block title %}
     {{ title }}
 {% endblock %}
 
 {% block body %}
-    <h1>Пользователи</h1>
-    {% for user in users %}
-        {{ user.name }}
-    {% endfor %}
+    <h1 class="users__h1">Пользователи</h1>
+    <div class="wrap">
+        {% for user in users %}
+            <div class="card" style="width: 18rem;">
+              <div class="card-body">
+                  <h5 class="card-title">{{ user.name }}</h5>
+                  <p class="card-text">{% if user.developer == 1 %} Программист {% endif %}</p>
+                  <p class="card-text">Пол: {% if user.sex %} Мужской {% else %} Женский {% endif %}</p>
+                  <p class="card-text">Возраст: {{ user.age }} лет</p>
+                  <a href="/user/{{ user.id }}" class="btn btn-primary">Узнать больше</a>
+              </div>
+            </div>
+        {% endfor %}
+    </div>
 {% endblock %}

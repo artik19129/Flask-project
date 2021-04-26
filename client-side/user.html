@@ -1,13 +1,16 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>fdsf</title>
-</head>
-<body>
+{% extends 'base.html' %}
 
-</body>
-</html>
+{% block title %}
+    {{ user.name }}
+{% endblock %}
+
+{% block body %}
+    <h1 class="users__h1">{{ user.name }}</h1>
+    {% if user.developer %}
+        <p><strong>{{ user.name }}</strong> упорно трудится над изучением <em>{{ user.language }}</em> <br>
+        И не смотря на юный возраст, а именно - {{ user.age }} лет. У {{ user.name }} не так уж и плохо получатеся
+        кодить.</p>
+    {% else %}
+        <p><strong>{{ user.name }}</strong> пинает ногу и ничего не делает :-)</p>
+    {% endif %}
+{% endblock %}

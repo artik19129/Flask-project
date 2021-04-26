@@ -1,0 +1,14 @@
+.users__h1 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.wrap {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.card {
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
