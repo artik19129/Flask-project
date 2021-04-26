@@ -1,0 +1,42 @@
+{
+  "1": {
+    "id": 1,
+    "name": "Sanka",
+    "age": 16,
+    "sex": 1,
+    "developer": true,
+    "language": "Python"
+  },
+  "2": {
+    "id": 2,
+    "name": "Artem",
+    "age": 16,
+    "sex": 1,
+    "developer": true,
+    "language": "Javascript"
+  },
+  "3": {
+    "id": 3,
+    "name": "Vasya",
+    "age": 19,
+    "sex": 1,
+    "developer": true,
+    "language": "Java"
+  },
+  "4": {
+    "id": 4,
+    "name": "Ilya",
+    "age": 14,
+    "sex": 1,
+    "developer": false,
+    "language": "None"
+  },
+  "5": {
+    "id": 5,
+    "name": "Masha",
+    "age": 15,
+    "sex": 0,
+    "developer": true,
+    "language": "Ruby"
+  }
+}
