@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request, redirect
 
 # import json
 
@@ -32,6 +32,18 @@ def users():
 @app.route('/user/<int:id>')
 def user(id):
     return render_template('user.html', user=students[id])
+
+
+@app.route('/search', methods=['POST', 'GET'])
+def search():
+    if request.method == 'POST':
+        name = request.form['name']
+        for stud in students:
+            if stud['name'] == name:
+                return redirect('/user/{}'.format(stud['id']))
+        return redirect('/users')
+    else:
+        return redirect('/users')
 
 
 if __name__ == "__main__":

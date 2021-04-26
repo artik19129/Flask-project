@@ -25,6 +25,10 @@
               <a class="nav-link {% block active2 %} {% endblock %}" href="/users">Пользователи</a>
             </li>
           </ul>
+            <form class="d-flex" action="/search" method="POST">
+                <input class="form-control me-2" type="search" name="name" placeholder="Найти пользователя">
+                <button class="btn btn-outline-success" type="submit">Найти</button>
+            </form>
         </div>
       </div>
     </nav>
