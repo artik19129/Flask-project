@@ -12,7 +12,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand" href="#">Flask</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -24,16 +24,35 @@
             <li class="nav-item">
               <a class="nav-link {% block active2 %} {% endblock %}" href="/users">Пользователи</a>
             </li>
+            {% if session['is_auth'] %}
+              <li class="nav-item">
+                <a class="nav-link {% block active3 %} {% endblock %}" href="/ucp">Личный Кабинет</a>
+              </li>
+            {% endif %}
           </ul>
             <form class="d-flex" action="/search" method="POST">
                 <input class="form-control me-2" type="search" name="name" placeholder="Найти пользователя">
                 <button class="btn btn-outline-success" type="submit">Найти</button>
             </form>
+            {% if not session['is_auth'] %}
+                <div class="col-md-5">
+                    <button type="button" id="btn_auth" class="nav_auth btn btn-primary">Войти</button>
+                    <button type="button" id="btn_reg" class="btn btn-warning">Зарегистрироваться</button>
+                </div>
+            {% else %}
+                <div class="col-md-5">
+                    <button type="button" id="btn_logout" class="nav_logout btn btn-danger">Выйти</button>
+                </div>
+            {% endif %}
         </div>
       </div>
     </nav>
     <div class="container">
         {% block body %} {% endblock %}
     </div>
+    {% if session['is_auth'] %}
+        <script src="{{ url_for('static', filename='js/ucp.js') }}"></script>
+    {% endif %}
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>
