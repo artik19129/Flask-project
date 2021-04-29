@@ -12,3 +12,11 @@
     margin-right: 15px;
     margin-bottom: 15px;
 }
+
+.nav_auth {
+    margin-left: 270px;
+}
+
+.nav_logout {
+    margin-left: 400px;
+}
