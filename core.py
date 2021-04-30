@@ -7,6 +7,7 @@ from flask_sqlalchemy import SQLAlchemy
 # import json
 
 app = Flask(__name__, template_folder="client-side")
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@{}/{}'.format(
     os.getenv('DB_USER', 'a0219210_flask'),
     os.getenv('DB_PASSWORD', '19129'),
@@ -16,7 +17,6 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@{}/{}'.format(
 db = SQLAlchemy(app)
 app.secret_key = 'jjjdhgasgjkdfwehfsdhfjsdf'
 app.permanent_session_lifetime = datetime.timedelta(hours=1)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
 class User(db.Model):
@@ -31,6 +31,13 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.name
+
+
+def log(type, text):
+    log = open('log.txt', 'a')
+    if type == 1:
+        log.write('[ERROR] {}\n'.format(text))
+        print('ok')
 
 
 # Не получилось реализовать подгрузку базы данных из json файла
@@ -61,8 +68,11 @@ def users():
 
 @app.route('/user/<int:id>')
 def user(id):
-    users = User.query.all()
-    return render_template('user.html', user=users[id])
+    try:
+        user = User.query.filter(User.id == id).first()
+    except:
+        log(1, 'Ошибка при запросе в бд (71 line)')
+    return render_template('user.html', user=user)
 
 
 @app.route('/search', methods=['POST', 'GET'])
@@ -105,8 +115,23 @@ def reg():
     if request.method == 'POST':
         name = request.form['name']
         password = request.form['password']
+        age = request.form['age']
+        sex = request.form['sex']
+        developer = request.form['developer']
+        language = request.form['language']
+        email = request.form['email']
+
+        user = User(name=name, password=password, email=email, age=age, sex=sex, developer=developer, language=language)
+
+        try:
+            db.session.add(user)
+            db.session.commit()
+            return redirect('/auth')
+        except:
+            log(1, '126 line ERROR')
     else:
-        return render_template('reg.html')
+        title = 'Регистрация'
+        return render_template('reg.html', title=title)
 
 
 @app.route('/ucp')
