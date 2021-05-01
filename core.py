@@ -30,6 +30,7 @@ class User(db.Model):
     sex = db.Column(db.Integer, nullable=False)
     developer = db.Column(db.Integer, nullable=False)
     language = db.Column(db.String(36))
+    avatar = db.Column(db.String(400))
 
     def __repr__(self):
         return '<User %r>' % self.name
@@ -88,9 +89,9 @@ def auth():
     if request.method == 'POST':
         try:
             user = User.query.filter(User.name == request.form['name']).first()
-        except db.except_:
+        except db.except_ as error:
             log(1, 'Error in auth query! (97 line)')
-            print('Error in auth query!')
+            print('Error in auth query! ' + error)
 
         if user is None:
             message = 'Логин или пароль не верный!'
@@ -139,6 +140,29 @@ def ucp():
     else:
         user: object = User.query.filter(User.id == session['user_id']).first()
         return render_template('ucp/index.html', user=user)
+
+
+@app.route('/update-user', methods=['POST', 'GET'])
+def update_user():
+    if request.method == 'POST':
+        name = request.form['name']
+        age = request.form['age']
+        email = request.form['email']
+        password = request.form['password']
+
+        try:
+            user = User.query.get(session['user_id'])
+            user.name = name
+            user.age = age
+            user.email = email
+            user.password = password
+            db.session.add(user)
+            db.session.commit()
+            session['user_name'] = name
+            return redirect('/ucp')
+        except db.except_ as error:
+            log(1, '154 line | ' + error)
+            print(error)
 
 
 @app.route('/ucp/logout')

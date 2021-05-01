@@ -1,14 +1,53 @@
 {% extends 'base.html' %}
 
 {% block active3 %}
-    active
+active
 {% endblock %}
 
 {% block title %}
-    {{ session['user_name'] }}
+{{ session['user_name'] }}
 {% endblock %}
 
 {% block body %}
-    <h1 class="users__h1">Личный кабинет</h1>
+<h1 class="users__h1">Личный кабинет</h1>
+<form action="/update-user" class="row g-3 needs-validation" method="POST" novalidate>
+    <div class="col-md-4">
+        <label class="form-label" for="validationCustomUsername">Имя пользователя</label>
+        <div class="input-group has-validation">
+            <input aria-describedby="inputGroupPrepend" class="form-control" id="validationCustomUsername" name="name"
+                   required type="text" value="{{ user.name }}">
+            <div class="invalid-feedback">
+                Пожалуйста, выберите имя пользователя.
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <label class="form-label" for="validationCustom02">Возраст</label>
+        <input class="form-control" id="validationCustom02" name="age" required type="number" value="{{ user.age }}">
+        <div class="valid-feedback">
+            Все хорошо!
+        </div>
+    </div>
+    <div class="col-md-6">
+        <label class="form-label" for="validationCustom03">Почта</label>
+        <input class="form-control" id="validationCustom03" name="email" required type="email" value="{{ user.email }}">
+        <div class="invalid-feedback">
+            Укажите действующую почту.
+        </div>
+    </div>
+    <div class="col-md-3">
+        <label class="form-label" for="validationCustom05">Пароль</label>
+        <input class="form-control" id="validationCustom05" name="password" required type="password" value="{{ user.password }}">
+        <div class="invalid-feedback">
+            Пожалуйста, предоставьте действующий почтовый индекс.
+        </div>
+    </div>
+    <div class="col-12">
+        <button class="btn btn-primary" type="submit">Сохранить</button>
+    </div>
+</form>
+{% endblock %}
 
+{% block scripts %}
+    <script src="{{ url_for('static', filename='js/form.js') }}"></script>
 {% endblock %}
