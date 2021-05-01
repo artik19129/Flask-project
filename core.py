@@ -1,5 +1,7 @@
 import os
 import datetime
+from typing import TextIO
+
 from flask import Flask, render_template, url_for, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 
@@ -34,23 +36,10 @@ class User(db.Model):
 
 
 def log(type, text):
-    log = open('log.txt', 'a')
+    log: TextIO = open('log.txt', 'a')
     if type == 1:
         log.write('[ERROR] {}\n'.format(text))
         print('ok')
-
-
-# Не получилось реализовать подгрузку базы данных из json файла
-# with open('users.json') as json_users:
-#     users = json.load(json_users)
-
-# students = [
-#     {"id": 0, "name": "Sanka", "age": "16", "sex": 1, "developer": 1, "language": "Python"},
-#     {"id": 1, "name": "Artem", "age": "16", "sex": 1, "developer": 1, "language": "JavaScript"},
-#     {"id": 2, "name": "Vasya", "age": "19", "sex": 1, "developer": 1, "language": "Java"},
-#     {"id": 3, "name": "Ilya", "age": "14", "sex": 1, "developer": 0, "language": "None"},
-#     {"id": 4, "name": "Masha", "age": "15", "sex": 0, "developer": 1, "language": "Ruby"},
-# ]
 
 
 @app.route('/')
@@ -61,16 +50,21 @@ def index():
 
 @app.route('/users')
 def users():
+    global users
     title = 'Пользователи'
-    users = User.query.all()
+    try:
+        users = User.query.all()
+    except db.except_:
+        log(1, 'Ошибка при запросе в бд (67 line)')
     return render_template('users.html', users=users, title=title)
 
 
 @app.route('/user/<int:id>')
 def user(id):
+    global user
     try:
         user = User.query.filter(User.id == id).first()
-    except:
+    except db.except_:
         log(1, 'Ошибка при запросе в бд (71 line)')
     return render_template('user.html', user=user)
 
@@ -94,17 +88,20 @@ def auth():
     if request.method == 'POST':
         try:
             user = User.query.filter(User.name == request.form['name']).first()
-        except:
+        except db.except_:
+            log(1, 'Error in auth query! (97 line)')
             print('Error in auth query!')
 
-        if user.password == request.form['password']:
+        if user is None:
+            message = 'Логин или пароль не верный!'
+            return render_template('auth.html', message=message)
+
+        elif user.password == request.form['password']:
             print('Успешно!')
             session['is_auth'] = True
             session['user_name'] = user.name
             session['user_id'] = user.id
             return redirect('/ucp')
-        else:
-            print('Что-то не такч')
     else:
         title = 'Авторизация'
         return render_template('auth.html', title=title)
@@ -121,14 +118,15 @@ def reg():
         language = request.form['language']
         email = request.form['email']
 
-        user = User(name=name, password=password, email=email, age=age, sex=sex, developer=developer, language=language)
+        user: User = User(name=name, password=password, email=email, age=age, sex=sex, developer=developer,
+                          language=language)
 
         try:
             db.session.add(user)
             db.session.commit()
             return redirect('/auth')
-        except:
-            log(1, '126 line ERROR')
+        except db.except_:
+            log(1, '133 line ERROR')
     else:
         title = 'Регистрация'
         return render_template('reg.html', title=title)
@@ -139,7 +137,7 @@ def ucp():
     if not session['is_auth']:
         return redirect('/auth')
     else:
-        user = User.query.filter(User.id == session['user_id']).first()
+        user: object = User.query.filter(User.id == session['user_id']).first()
         return render_template('ucp/index.html', user=user)
 
 

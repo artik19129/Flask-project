@@ -8,4 +8,3 @@ btn_auth.onclick = function () {
 bth_reg.onclick = function () {
     window.location.href = '/reg';
 }
-

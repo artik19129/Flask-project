@@ -116,3 +116,4 @@ dmypy.json
 .idea/Flask-project.iml
 *.xml
 *.iml
+.DS_Store
