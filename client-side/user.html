@@ -6,7 +6,9 @@
 
 {% block body %}
     <h1 class="users__h1">{{ user.name }}</h1>
-    <img src="{{ user.avatar }}" alt="" width="200" height="200">
+    {% if user.avatar != null %}
+        <img src="{{ user.avatar }}" alt="" width="200" height="200">
+    {% endif %}
     {% if user.developer %}
         <p><strong>{{ user.name }}</strong> упорно трудится над изучением <em>{{ user.language }}</em> <br>
         И не смотря на юный возраст, а именно - {{ user.age }} лет. У {{ user.name }} не так уж и плохо получатеся

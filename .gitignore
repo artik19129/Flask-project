@@ -117,3 +117,6 @@ dmypy.json
 *.xml
 *.iml
 .DS_Store
+.idea/Flask-project.iml
+.idea/misc.xml
+.idea/vcs.xml
