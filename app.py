@@ -37,6 +37,7 @@ class User(db.Model):
     def __repr__(self):
         return '<User %r>' % self.name
 
+
 global three
 three = datetime.timedelta(hours=3)
 
@@ -47,6 +48,7 @@ blogtime = datetime.utcnow() + three
 
 class Blog(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
     title = db.Column(db.String(80), unique=True, nullable=False)
     tag = db.Column(db.String(80))
     text = db.Column(db.TEXT, nullable=False)
@@ -110,15 +112,13 @@ def auth():
         try:
             user = User.query.filter(User.name == request.form['name']).first()
         except db.except_ as error:
-            log(1, 'Error in auth query! (97 line)')
-            print('Error in auth query! ' + error)
+            log(1, 'Error in auth query! (114 line)')
 
         if user is None:
             message = 'Логин или пароль не верный!'
             return render_template('auth.html', message=message)
 
         elif user.password == request.form['password']:
-            print('Успешно!')
             session['is_auth'] = True
             session['user_name'] = user.name
             session['user_id'] = user.id
@@ -196,17 +196,24 @@ def logout():
 @app.route('/blog')
 def posts():
     global posts
+    global users
     title = 'Блог'
     try:
         posts = Blog.query.order_by(Blog.id.desc()).all()
+        users = User.query.all()
     except db.except_:
-        log(1, 'Ошибка при запросе в бд (189 line)')
-    return render_template('blog/posts.html', posts=posts, title=title, three=three)
+        log(1, 'Ошибка при запросе в бд (206 line)')
+    return render_template('blog/posts.html', posts=posts, title=title, three=three, users=users)
 
 
 @app.route('/blog/<int:id>')
 def post(id):
-    return render_template('blog/post.html')
+    global post
+    try:
+        post = Blog.query.filter(Blog.id == id).first()
+    except db.except_:
+        log(1, 'Ошибка при запросе в бд (215 line)')
+    return render_template('blog/post.html', post=post, title=post.title)
 
 
 if __name__ == "__main__":
