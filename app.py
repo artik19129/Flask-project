@@ -216,5 +216,21 @@ def post(id):
     return render_template('blog/post.html', post=post, title=post.title)
 
 
+@app.route('/blog/<int:id>/edit', methods=['POST', 'GET'])
+def edit_post(id):
+    if not session['is_auth']:
+        return redirect('/auth')
+    else:
+        global post
+        try:
+            post = Blog.query.filter(Blog.id == id).first()
+        except db.except_:
+            log(1, 'Ошибка при запросе в бд (228 line)')
+    if session['user_id'] == post.user_id:
+        return render_template('blog/edit.html', post=post, title='Редактирование')
+    else:
+        return redirect('/blog/{}'.format(id))
+
+
 if __name__ == "__main__":
     app.run(debug=True)
