@@ -1,8 +1,9 @@
-import os
 import datetime
+import os
 from typing import TextIO
+from flask_moment import Moment
 
-from flask import Flask, render_template, url_for, request, redirect, session
+from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 
 # open('dataHandler.py')
@@ -19,6 +20,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://{}:{}@{}/{}'.format(
 db = SQLAlchemy(app)
 app.secret_key = 'jjjdhgasgjkdfwehfsdhfjsdf'
 app.permanent_session_lifetime = datetime.timedelta(hours=1)
+moment = Moment(app)
 
 
 class User(db.Model):
@@ -34,6 +36,24 @@ class User(db.Model):
 
     def __repr__(self):
         return '<User %r>' % self.name
+
+global three
+three = datetime.timedelta(hours=3)
+
+from datetime import datetime
+
+blogtime = datetime.utcnow() + three
+
+
+class Blog(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(80), unique=True, nullable=False)
+    tag = db.Column(db.String(80))
+    text = db.Column(db.TEXT, nullable=False)
+    data = db.Column(db.DateTime, default=blogtime)
+
+    def __repr__(self):
+        return '<Post %r>' % self.id
 
 
 def log(type, text):
@@ -171,6 +191,22 @@ def logout():
     session.pop('user_name', None)
     session.pop('user_id', None)
     return redirect('/')
+
+
+@app.route('/blog')
+def posts():
+    global posts
+    title = 'Блог'
+    try:
+        posts = Blog.query.order_by(Blog.id.desc()).all()
+    except db.except_:
+        log(1, 'Ошибка при запросе в бд (189 line)')
+    return render_template('blog/posts.html', posts=posts, title=title, three=three)
+
+
+@app.route('/blog/<int:id>')
+def post(id):
+    return render_template('blog/post.html')
 
 
 if __name__ == "__main__":

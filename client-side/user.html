@@ -6,7 +6,7 @@
 
 {% block body %}
     <h1 class="users__h1">{{ user.name }}</h1>
-    {% if user.avatar != null %}
+    {% if user.avatar != None %}
         <img src="{{ user.avatar }}" alt="" width="200" height="200">
     {% endif %}
     {% if user.developer %}
