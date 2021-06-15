@@ -226,10 +226,61 @@ def edit_post(id):
             post = Blog.query.filter(Blog.id == id).first()
         except db.except_:
             log(1, 'Ошибка при запросе в бд (228 line)')
+
+        if request.method == 'POST':
+            title = request.form['title']
+            text = request.form['text']
+            tag = request.form['tag']
+
+            blog = Blog.query.get(id)
+            blog.title = title
+            blog.text = text
+            blog.tag = tag
+
+            try:
+                db.session.add(blog)
+                db.session.commit()
+                return redirect('/blog')
+            except db.except_:
+                log(1, '245 line ERROR')
     if session['user_id'] == post.user_id:
         return render_template('blog/edit.html', post=post, title='Редактирование')
     else:
         return redirect('/blog/{}'.format(id))
+
+
+@app.route('/blog/<int:id>/delete')
+def del_post(id):
+    try:
+        blog = Blog.query.get(id)
+        db.session.delete(blog)
+        db.session.commit()
+        return redirect('/blog')
+    except:
+        return 'delete post' + id
+
+
+@app.route('/blog/add', methods=['POST', 'GET'])
+def add_post():
+    if not session['is_auth']:
+        return redirect('/auth')
+    else:
+        if request.method == 'POST':
+            title = request.form['title']
+            text = request.form['text']
+            tag = request.form['tag']
+
+            global Blog
+            blog = Blog(title=title, text=text, tag=tag, user_id=session['user_id'])
+
+            try:
+                db.session.add(blog)
+                db.session.commit()
+                return redirect('/blog')
+            except db.except_:
+                log(1, '252 line ERROR')
+        else:
+            return render_template('blog/add.html', title='Новый пост')
 
 
 if __name__ == "__main__":

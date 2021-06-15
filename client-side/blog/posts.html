@@ -16,7 +16,7 @@
 {% endblock %}
 
 {% block body %}
-  <h1 class="users__h1">Блог</h1>
+  <h1 class="users__h1">Блог<a href="/blog/add" style="margin-left: 20px"><button class="btn btn-warning" type="button">Новый пост</button></a></h1>
   {% for post in posts %}
     <div class="card mb-3">
       <div class="row g-0">

@@ -5,24 +5,24 @@
 {% endblock %}
 
 {% block body %}
-  <h1 class="users__h1">{{ post.title }}</h1>
-  <form action="/blog/{{ post.id }}/edit" class="row g-3 needs-validation" method="POST" novalidate>
+  <h1 class="users__h1">Новый пост</h1>
+  <form action="/blog/add" class="row g-3 needs-validation" method="POST" novalidate>
     <div class="mb-3">
       <label class="form-label" for="exampleFormControlInput1">Заголовок</label>
-      <input class="form-control" id="exampleFormControlInput1" placeholder="Заголовок" value="{{ post.title }}" type="text" name="title" required>
+      <input class="form-control" id="exampleFormControlInput1" placeholder="Заголовок" type="text" name="title" required>
     </div>
     <div class="mb-3">
       <label class="form-label" for="exampleFormControlInput1">Тег</label>
       <select class="form-select" required name="tag">
         <option selected disabled>Выберите тег</option>
-        <option value="JAVA" {% if post.tag == 'JAVA' %} selected {% endif %}>JAVA</option>
-        <option value="PYTHON" {% if post.tag == 'PYTHON' %} selected {% endif %}>PYTHON</option>
-        <option value="JAVASCRIPT" {% if post.tag == 'JAVASCRIPT' %} selected {% endif %}>JAVASCRIPT</option>
+        <option value="JAVA">JAVA</option>
+        <option value="PYTHON">PYTHON</option>
+        <option value="JAVASCRIPT">JAVASCRIPT</option>
       </select>
     </div>
     <div class="mb-3">
       <label class="form-label" for="exampleFormControlTextarea1">Тест</label>
-      <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" name="text" placeholder="{{ post.text }}" required></textarea>
+      <textarea class="form-control" id="exampleFormControlTextarea1" rows="10" name="text" required></textarea>
     </div>
     <div class="col-12">
       <button class="btn btn-primary" type="submit">Создать</button>
