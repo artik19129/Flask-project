@@ -120,3 +120,4 @@ dmypy.json
 .idea/Flask-project.iml
 .idea/misc.xml
 .idea/vcs.xml
+log.txt
