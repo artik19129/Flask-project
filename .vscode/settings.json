@@ -1,0 +1,7 @@
+{
+    "python.analysis.autoImportCompletions": false,
+    "python.autoComplete.addBrackets": true,
+    "python.formatting.autopep8Path": "",
+    "python.formatting.provider": "none",
+    "python.analysis.completeFunctionParens": true
+}

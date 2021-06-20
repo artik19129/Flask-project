@@ -1,5 +1,7 @@
+from datetime import datetime
 import datetime
 import os
+import hashlib
 from typing import TextIO
 from flask_moment import Moment
 
@@ -8,6 +10,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 # open('dataHandler.py')
 # import json
+# hash = hashlib.md5(b'Holka19129')
+# print(hash.hexdigest())
 
 app = Flask(__name__, template_folder="client-side")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -40,9 +44,7 @@ class User(db.Model):
 
 global three
 three = datetime.timedelta(hours=3)
-
 from datetime import datetime
-
 blogtime = datetime.utcnow() + three
 
 
@@ -63,6 +65,13 @@ def log(type, text):
     if type == 1:
         log.write('[ERROR] {}\n'.format(text))
         print('ok')
+
+
+def is_auth():
+    if session.get('is_auth') == True:
+        return True
+    else:
+        return False
 
 
 @app.route('/')
@@ -113,16 +122,23 @@ def auth():
             user = User.query.filter(User.name == request.form['name']).first()
         except db.except_ as error:
             log(1, 'Error in auth query! (114 line)')
+        formpass = request.form['password']
+        hash_pass = hashlib.md5(str(formpass).encode())
+        password = hash_pass.hexdigest()
 
         if user is None:
-            message = 'Логин или пароль не верный!'
+            message = 'Такого пользователя не существует!'
             return render_template('auth.html', message=message)
 
-        elif user.password == request.form['password']:
+        elif user.password == password:
             session['is_auth'] = True
             session['user_name'] = user.name
             session['user_id'] = user.id
             return redirect('/ucp')
+
+        else:
+            message = 'Пароль неверный!'
+            return render_template('auth.html', message=message)
     else:
         title = 'Авторизация'
         return render_template('auth.html', title=title)
@@ -132,12 +148,14 @@ def auth():
 def reg():
     if request.method == 'POST':
         name = request.form['name']
-        password = request.form['password']
         age = request.form['age']
         sex = request.form['sex']
         developer = request.form['developer']
         language = request.form['language']
         email = request.form['email']
+
+        hash_pass = hashlib.md5(request.form['password'])
+        password = hash_pass.hexdigest()
 
         user: User = User(name=name, password=password, email=email, age=age, sex=sex, developer=developer,
                           language=language)
@@ -155,7 +173,7 @@ def reg():
 
 @app.route('/ucp')
 def ucp():
-    if not session['is_auth']:
+    if not is_auth():
         return redirect('/auth')
     else:
         user: object = User.query.filter(User.id == session['user_id']).first()
@@ -168,7 +186,8 @@ def update_user():
         name = request.form['name']
         age = request.form['age']
         email = request.form['email']
-        password = request.form['password']
+        hash_pass = hashlib.md5(request.form['password'])
+        password = hash_pass.hexdigest()
 
         try:
             user = User.query.get(session['user_id'])
@@ -218,7 +237,7 @@ def post(id):
 
 @app.route('/blog/<int:id>/edit', methods=['POST', 'GET'])
 def edit_post(id):
-    if not session['is_auth']:
+    if not is_auth():
         return redirect('/auth')
     else:
         global post
@@ -262,7 +281,7 @@ def del_post(id):
 
 @app.route('/blog/add', methods=['POST', 'GET'])
 def add_post():
-    if not session['is_auth']:
+    if not is_auth():
         return redirect('/auth')
     else:
         if request.method == 'POST':
@@ -271,7 +290,8 @@ def add_post():
             tag = request.form['tag']
 
             global Blog
-            blog = Blog(title=title, text=text, tag=tag, user_id=session['user_id'])
+            blog = Blog(title=title, text=text, tag=tag,
+                        user_id=session['user_id'])
 
             try:
                 db.session.add(blog)
